@@ -1,0 +1,102 @@
+:root {
+  color-scheme: light;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #f7fbff 0%, #eaf6f0 100%);
+  color: #153321;
+}
+
+main {
+  max-width: 700px;
+  margin: 48px auto;
+  padding: 24px;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(20, 40, 20, 0.08);
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+input[type="text"] {
+  flex: 1;
+  border: 1px solid #bad1c0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 16px;
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+button.primary {
+  background: #0f7a3c;
+  color: #fff;
+}
+
+button.ghost {
+  background: #edf5ef;
+  color: #1e5030;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e8f0ea;
+}
+
+.todo-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.done {
+  text-decoration: line-through;
+  color: #6f7f74;
+}
+
+.empty {
+  color: #607266;
+  margin-top: 16px;
+}
+
+@media (max-width: 640px) {
+  main {
+    margin: 24px auto;
+    padding: 16px;
+  }
+}

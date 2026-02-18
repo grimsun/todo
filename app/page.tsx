@@ -1,0 +1,168 @@
+"use client";
+
+import { FormEvent, useEffect, useMemo, useState } from "react";
+
+type Todo = {
+  id: string;
+  text: string;
+  done: boolean;
+};
+
+const STORAGE_KEY = "todo-local-next-items";
+
+type StorageLike = Pick<Storage, "getItem" | "setItem">;
+
+function generateTodoId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function getStorage(): StorageLike | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const value = window.localStorage as unknown;
+  if (!value || typeof (value as StorageLike).getItem !== "function" || typeof (value as StorageLike).setItem !== "function") {
+    return null;
+  }
+
+  return value as StorageLike;
+}
+
+function safeReadTodos(): Todo[] {
+  try {
+    const storage = getStorage();
+    if (!storage) {
+      return [];
+    }
+
+    const raw = storage.getItem(STORAGE_KEY);
+    if (!raw) {
+      return [];
+    }
+
+    const parsed = JSON.parse(raw) as Todo[];
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed.filter(
+      (item) => typeof item?.id === "string" && typeof item?.text === "string" && typeof item?.done === "boolean"
+    );
+  } catch {
+    return [];
+  }
+}
+
+export default function HomePage() {
+  const [text, setText] = useState("");
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setTodos(safeReadTodos());
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isLoaded) {
+      return;
+    }
+
+    try {
+      const storage = getStorage();
+      if (!storage) {
+        return;
+      }
+
+      storage.setItem(STORAGE_KEY, JSON.stringify(todos));
+    } catch {
+      // Ignore storage write errors (private mode/quota issues).
+    }
+  }, [isLoaded, todos]);
+
+  const remainingCount = useMemo(() => todos.filter((todo) => !todo.done).length, [todos]);
+
+  function addTodo(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const trimmed = text.trim();
+
+    if (!trimmed) {
+      return;
+    }
+
+    setTodos((prev) => [
+      {
+        id: generateTodoId(),
+        text: trimmed,
+        done: false
+      },
+      ...prev
+    ]);
+    setText("");
+  }
+
+  function toggleTodo(id: string) {
+    setTodos((prev) => prev.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo)));
+  }
+
+  function removeTodo(id: string) {
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
+  }
+
+  function clearDone() {
+    setTodos((prev) => prev.filter((todo) => !todo.done));
+  }
+
+  return (
+    <main>
+      <h1>Todo</h1>
+      <p>{remainingCount} remaining</p>
+
+      <section className="card">
+        <form className="row" onSubmit={addTodo}>
+          <input
+            type="text"
+            placeholder="Add a task..."
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+            aria-label="Todo text"
+          />
+          <button className="primary" type="submit">
+            Add
+          </button>
+        </form>
+
+        {todos.length === 0 ? (
+          <p className="empty">No tasks yet.</p>
+        ) : (
+          <ul>
+            {todos.map((todo) => (
+              <li key={todo.id}>
+                <label className="todo-label">
+                  <input type="checkbox" checked={todo.done} onChange={() => toggleTodo(todo.id)} />
+                  <span className={todo.done ? "done" : ""}>{todo.text}</span>
+                </label>
+                <button className="ghost" type="button" onClick={() => removeTodo(todo.id)}>
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {todos.some((todo) => todo.done) && (
+          <div style={{ marginTop: 16 }}>
+            <button className="ghost" type="button" onClick={clearDone}>
+              Clear completed
+            </button>
+          </div>
+        )}
+      </section>
+    </main>
+  );
+}
