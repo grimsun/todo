@@ -73,16 +73,20 @@ export default function HomePage() {
       return;
     }
 
-    try {
-      const storage = getStorage();
-      if (!storage) {
-        return;
-      }
-
-      storage.setItem(STORAGE_KEY, JSON.stringify(todos));
-    } catch {
-      // Ignore storage write errors (private mode/quota issues).
+    const storage = getStorage();
+    if (!storage) {
+      return;
     }
+
+    const timeoutId = window.setTimeout(() => {
+      try {
+        storage.setItem(STORAGE_KEY, JSON.stringify(todos));
+      } catch {
+        // Ignore storage write errors (private mode/quota issues).
+      }
+    }, 200);
+
+    return () => window.clearTimeout(timeoutId);
   }, [isLoaded, todos]);
 
   const remainingCount = useMemo(() => todos.filter((todo) => !todo.done).length, [todos]);
