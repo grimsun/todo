@@ -62,6 +62,17 @@ button.ghost {
   color: #1e5030;
 }
 
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+button.ghost.active {
+  background: #cfe7d7;
+  font-weight: 600;
+}
+
 ul {
   list-style: none;
   padding: 0;

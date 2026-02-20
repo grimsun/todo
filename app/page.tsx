@@ -8,6 +8,8 @@ type Todo = {
   done: boolean;
 };
 
+type Filter = "all" | "active" | "completed";
+
 const STORAGE_KEY = "todo-local-next-items";
 
 type StorageLike = Pick<Storage, "getItem" | "setItem">;
@@ -61,6 +63,7 @@ function safeReadTodos(): Todo[] {
 export default function HomePage() {
   const [text, setText] = useState("");
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [filter, setFilter] = useState<Filter>("all");
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -90,6 +93,17 @@ export default function HomePage() {
   }, [isLoaded, todos]);
 
   const remainingCount = useMemo(() => todos.filter((todo) => !todo.done).length, [todos]);
+  const visibleTodos = useMemo(() => {
+    if (filter === "active") {
+      return todos.filter((todo) => !todo.done);
+    }
+
+    if (filter === "completed") {
+      return todos.filter((todo) => todo.done);
+    }
+
+    return todos;
+  }, [filter, todos]);
 
   function addTodo(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -125,7 +139,9 @@ export default function HomePage() {
   return (
     <main>
       <h1>Todo</h1>
-      <p>{remainingCount} remaining</p>
+      <p>
+        {remainingCount} {remainingCount === 1 ? "item" : "items"} remaining
+      </p>
 
       <section className="card">
         <form className="row" onSubmit={addTodo}>
@@ -141,11 +157,39 @@ export default function HomePage() {
           </button>
         </form>
 
+        {todos.length > 0 && (
+          <div className="filters" role="tablist" aria-label="Todo filters">
+            <button
+              className={filter === "all" ? "ghost active" : "ghost"}
+              type="button"
+              onClick={() => setFilter("all")}
+            >
+              All
+            </button>
+            <button
+              className={filter === "active" ? "ghost active" : "ghost"}
+              type="button"
+              onClick={() => setFilter("active")}
+            >
+              Active
+            </button>
+            <button
+              className={filter === "completed" ? "ghost active" : "ghost"}
+              type="button"
+              onClick={() => setFilter("completed")}
+            >
+              Completed
+            </button>
+          </div>
+        )}
+
         {todos.length === 0 ? (
           <p className="empty">No tasks yet.</p>
+        ) : visibleTodos.length === 0 ? (
+          <p className="empty">No tasks in this filter.</p>
         ) : (
           <ul>
-            {todos.map((todo) => (
+            {visibleTodos.map((todo) => (
               <li key={todo.id}>
                 <label className="todo-label">
                   <input type="checkbox" checked={todo.done} onChange={() => toggleTodo(todo.id)} />
