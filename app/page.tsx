@@ -92,17 +92,31 @@ export default function HomePage() {
     return () => window.clearTimeout(timeoutId);
   }, [isLoaded, todos]);
 
-  const remainingCount = useMemo(() => todos.filter((todo) => !todo.done).length, [todos]);
-  const visibleTodos = useMemo(() => {
+  const { remainingCount, visibleTodos, hasCompleted } = useMemo(() => {
+    let remaining = 0;
+    let hasDone = false;
+    const active: Todo[] = [];
+    const completed: Todo[] = [];
+
+    for (const todo of todos) {
+      if (todo.done) {
+        hasDone = true;
+        completed.push(todo);
+      } else {
+        remaining += 1;
+        active.push(todo);
+      }
+    }
+
     if (filter === "active") {
-      return todos.filter((todo) => !todo.done);
+      return { remainingCount: remaining, visibleTodos: active, hasCompleted: hasDone };
     }
 
     if (filter === "completed") {
-      return todos.filter((todo) => todo.done);
+      return { remainingCount: remaining, visibleTodos: completed, hasCompleted: hasDone };
     }
 
-    return todos;
+    return { remainingCount: remaining, visibleTodos: todos, hasCompleted: hasDone };
   }, [filter, todos]);
 
   function addTodo(event: FormEvent<HTMLFormElement>) {
@@ -203,7 +217,7 @@ export default function HomePage() {
           </ul>
         )}
 
-        {todos.some((todo) => todo.done) && (
+        {hasCompleted && (
           <div style={{ marginTop: 16 }}>
             <button className="ghost" type="button" onClick={clearDone}>
               Clear completed
