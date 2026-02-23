@@ -150,6 +150,15 @@ export default function HomePage() {
     setTodos((prev) => prev.filter((todo) => !todo.done));
   }
 
+  function toggleAll() {
+    if (todos.length === 0) {
+      return;
+    }
+
+    const shouldMarkDone = todos.some((todo) => !todo.done);
+    setTodos((prev) => prev.map((todo) => ({ ...todo, done: shouldMarkDone })));
+  }
+
   return (
     <main>
       <h1>Todo</h1>
@@ -172,29 +181,36 @@ export default function HomePage() {
         </form>
 
         {todos.length > 0 && (
-          <div className="filters" role="tablist" aria-label="Todo filters">
-            <button
-              className={filter === "all" ? "ghost active" : "ghost"}
-              type="button"
-              onClick={() => setFilter("all")}
-            >
-              All
-            </button>
-            <button
-              className={filter === "active" ? "ghost active" : "ghost"}
-              type="button"
-              onClick={() => setFilter("active")}
-            >
-              Active
-            </button>
-            <button
-              className={filter === "completed" ? "ghost active" : "ghost"}
-              type="button"
-              onClick={() => setFilter("completed")}
-            >
-              Completed
-            </button>
-          </div>
+          <>
+            <div className="toolbar">
+              <button className="ghost" type="button" onClick={toggleAll}>
+                {remainingCount > 0 ? "Mark all done" : "Mark all active"}
+              </button>
+            </div>
+            <div className="filters" role="tablist" aria-label="Todo filters">
+              <button
+                className={filter === "all" ? "ghost active" : "ghost"}
+                type="button"
+                onClick={() => setFilter("all")}
+              >
+                All
+              </button>
+              <button
+                className={filter === "active" ? "ghost active" : "ghost"}
+                type="button"
+                onClick={() => setFilter("active")}
+              >
+                Active
+              </button>
+              <button
+                className={filter === "completed" ? "ghost active" : "ghost"}
+                type="button"
+                onClick={() => setFilter("completed")}
+              >
+                Completed
+              </button>
+            </div>
+          </>
         )}
 
         {todos.length === 0 ? (

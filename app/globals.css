@@ -68,6 +68,12 @@ button.ghost {
   margin-top: 14px;
 }
 
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
 button.ghost.active {
   background: #cfe7d7;
   font-weight: 600;
