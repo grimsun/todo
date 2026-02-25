@@ -118,6 +118,7 @@ export default function HomePage() {
 
     return { remainingCount: remaining, visibleTodos: todos, hasCompleted: hasDone };
   }, [filter, todos]);
+  const canAddTodo = text.trim().length > 0;
 
   function addTodo(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -175,7 +176,7 @@ export default function HomePage() {
             onChange={(event) => setText(event.target.value)}
             aria-label="Todo text"
           />
-          <button className="primary" type="submit">
+          <button className="primary" type="submit" disabled={!canAddTodo}>
             Add
           </button>
         </form>
