@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 type Todo = {
   id: string;
@@ -65,10 +65,12 @@ export default function HomePage() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<Filter>("all");
   const [isLoaded, setIsLoaded] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setTodos(safeReadTodos());
     setIsLoaded(true);
+    inputRef.current?.focus();
   }, []);
 
   useEffect(() => {
@@ -137,6 +139,7 @@ export default function HomePage() {
       ...prev
     ]);
     setText("");
+    inputRef.current?.focus();
   }
 
   function toggleTodo(id: string) {
@@ -170,6 +173,7 @@ export default function HomePage() {
       <section className="card">
         <form className="row" onSubmit={addTodo}>
           <input
+            ref={inputRef}
             type="text"
             placeholder="Add a task..."
             value={text}
