@@ -196,6 +196,7 @@ export default function HomePage() {
               <button
                 className={filter === "all" ? "ghost active" : "ghost"}
                 type="button"
+                aria-pressed={filter === "all"}
                 onClick={() => setFilter("all")}
               >
                 All
@@ -203,6 +204,7 @@ export default function HomePage() {
               <button
                 className={filter === "active" ? "ghost active" : "ghost"}
                 type="button"
+                aria-pressed={filter === "active"}
                 onClick={() => setFilter("active")}
               >
                 Active
@@ -210,6 +212,7 @@ export default function HomePage() {
               <button
                 className={filter === "completed" ? "ghost active" : "ghost"}
                 type="button"
+                aria-pressed={filter === "completed"}
                 onClick={() => setFilter("completed")}
               >
                 Completed
