@@ -154,6 +154,10 @@ export default function HomePage() {
     setTodos((prev) => prev.filter((todo) => !todo.done));
   }
 
+  function clearAll() {
+    setTodos([]);
+  }
+
   function toggleAll() {
     if (todos.length === 0) {
       return;
@@ -178,6 +182,11 @@ export default function HomePage() {
             placeholder="Add a task..."
             value={text}
             onChange={(event) => setText(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                setText("");
+              }
+            }}
             aria-label="Todo text"
           />
           <button className="primary" type="submit" disabled={!canAddTodo}>
@@ -245,6 +254,14 @@ export default function HomePage() {
           <div style={{ marginTop: 16 }}>
             <button className="ghost" type="button" onClick={clearDone}>
               Clear completed
+            </button>
+          </div>
+        )}
+
+        {todos.length > 0 && (
+          <div style={{ marginTop: 10 }}>
+            <button className="ghost" type="button" onClick={clearAll}>
+              Clear all
             </button>
           </div>
         )}
