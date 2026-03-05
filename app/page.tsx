@@ -239,10 +239,20 @@ export default function HomePage() {
             {visibleTodos.map((todo) => (
               <li key={todo.id}>
                 <label className="todo-label">
-                  <input type="checkbox" checked={todo.done} onChange={() => toggleTodo(todo.id)} />
+                  <input
+                    type="checkbox"
+                    checked={todo.done}
+                    onChange={() => toggleTodo(todo.id)}
+                    aria-label={`${todo.done ? "Mark as active" : "Mark as completed"}: ${todo.text}`}
+                  />
                   <span className={todo.done ? "done" : ""}>{todo.text}</span>
                 </label>
-                <button className="ghost" type="button" onClick={() => removeTodo(todo.id)}>
+                <button
+                  className="ghost"
+                  type="button"
+                  onClick={() => removeTodo(todo.id)}
+                  aria-label={`Delete task: ${todo.text}`}
+                >
                   Delete
                 </button>
               </li>
