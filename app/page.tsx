@@ -94,7 +94,7 @@ export default function HomePage() {
     return () => window.clearTimeout(timeoutId);
   }, [isLoaded, todos]);
 
-  const { remainingCount, visibleTodos, hasCompleted } = useMemo(() => {
+  const { remainingCount, completedCount, visibleTodos, hasCompleted } = useMemo(() => {
     let remaining = 0;
     let hasDone = false;
     const active: Todo[] = [];
@@ -111,14 +111,24 @@ export default function HomePage() {
     }
 
     if (filter === "active") {
-      return { remainingCount: remaining, visibleTodos: active, hasCompleted: hasDone };
+      return { remainingCount: remaining, completedCount: completed.length, visibleTodos: active, hasCompleted: hasDone };
     }
 
     if (filter === "completed") {
-      return { remainingCount: remaining, visibleTodos: completed, hasCompleted: hasDone };
+      return {
+        remainingCount: remaining,
+        completedCount: completed.length,
+        visibleTodos: completed,
+        hasCompleted: hasDone
+      };
     }
 
-    return { remainingCount: remaining, visibleTodos: todos, hasCompleted: hasDone };
+    return {
+      remainingCount: remaining,
+      completedCount: completed.length,
+      visibleTodos: todos,
+      hasCompleted: hasDone
+    };
   }, [filter, todos]);
   const canAddTodo = text.trim().length > 0;
 
@@ -171,7 +181,7 @@ export default function HomePage() {
     <main>
       <h1>Todo</h1>
       <p>
-        {remainingCount} {remainingCount === 1 ? "item" : "items"} remaining
+        {remainingCount} {remainingCount === 1 ? "item" : "items"} remaining · {completedCount} completed
       </p>
 
       <section className="card">
